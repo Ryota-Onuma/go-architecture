@@ -1,12 +1,14 @@
 package main
 
 import (
+	"onion/internal/domain/service/articles"
 	"onion/internal/infrastructure/config"
 	errs "onion/internal/infrastructure/error"
 	"onion/internal/infrastructure/logger"
+	"onion/internal/infrastructure/repository"
 	"onion/internal/presentation/router"
 	"onion/internal/usecase"
-	"onion/internal/usecase/articles"
+	usecasearticles "onion/internal/usecase/articles"
 )
 
 func main() {
@@ -25,7 +27,10 @@ func main() {
 	rt := router.New(config.Server.Port, l)
 	baseUsecase := usecase.NewBaseUsecase(l, errs.New())
 	rt.AddFetchArticlesHandler(
-		articles.NewFetchArticlesUsecase(baseUsecase),
+		usecasearticles.NewFetchArticlesUsecase(baseUsecase, repository.NewArticleRepository()),
+	)
+	rt.AddCreateArticleHandler(
+		usecasearticles.NewCreateArticleUsecase(baseUsecase, articles.NewCreateArticleService(), repository.NewArticleRepository()),
 	)
 	if err := rt.Run(); err != nil {
 		panic(err)
