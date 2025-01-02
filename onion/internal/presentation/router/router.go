@@ -23,7 +23,7 @@ type Router struct {
 }
 
 func (r *Router) Run() error {
-	routerWithMiddleware := LoggingMiddleware(r.logger, r.mux)
+	routerWithMiddleware := LoggingMiddleware(r.logger, r.mux) // リクエスト処理の前後での処理
 	r.logger.Info(context.Background(), fmt.Sprintf("Server is running on port %d", r.port))
 	addr := fmt.Sprintf(":%d", r.port)
 	if err := http.ListenAndServe(addr, routerWithMiddleware); err != nil {
